@@ -1,5 +1,7 @@
 const oracledb = require('oracledb');
+const moment   = require('moment');
 
+const today  = moment();
 const config = {
   user          : "",
   password      : "",
@@ -12,17 +14,19 @@ oracledb
     let sql1 = new Promise((resolve, reject) => {
       resolve(conn.execute(
         `SELECT
-           count(*)
+           count(col_name)
          FROM
-           schema.table1`,
-        [])
+           schema.table1
+         WHERE
+           some_date = :YYYYMMDD`,
+        [today.subtract(2, 'days').format('YYYYMMDD')])
       );
     });
 
     let sql2 = new Promise((resolve, reject) => {
       resolve(conn.execute(
         `SELECT
-           count(*)
+           count(col_name)
          FROM
            schema.table2`,
         [])
@@ -32,6 +36,6 @@ oracledb
     return Promise.all([sql1, sql2])
   })
   .then(results => {
-    console.log(results.map(result => result.rows[0][0]));
+    console.log(results.map(result => result.rows));
   })
   .catch(err => { console.log(err); });
