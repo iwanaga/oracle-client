@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/iwanaga/oracle-client/issues"
   },
-  "homepage": "https://github.com/iwanaga/oracle-client#readme"
+  "homepage": "https://github.com/iwanaga/oracle-client#readme",
+  "dependencies": {
+    "oracledb": "^1.11.0"
+  }
 }
