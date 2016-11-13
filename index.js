@@ -6,18 +6,32 @@ const config = {
   connectString : ""
 };
 
-oracledb.getConnection(config, (err, connection) => {
-  if (err) { console.error(err.message); return; }
+oracledb
+  .getConnection(config)
+  .then(conn => {
+    let sql1 = new Promise((resolve, reject) => {
+      resolve(conn.execute(
+        `SELECT
+           count(*)
+         FROM
+           schema.table1`,
+        [])
+      );
+    });
 
-  connection.execute(
-    `SELECT
-       *
-     FROM
-       schema.table`,
-    [],
-    (err, result) => {
-      if (err) { console.error(err.message); return; }
-      console.log(result.rows);
-    }
-  );
-});
+    let sql2 = new Promise((resolve, reject) => {
+      resolve(conn.execute(
+        `SELECT
+           count(*)
+         FROM
+           schema.table2`,
+        [])
+      );
+    });
+
+    return Promise.all([sql1, sql2])
+  })
+  .then(results => {
+    console.log(results.map(result => result.rows[0][0]));
+  })
+  .catch(err => { console.log(err); });
